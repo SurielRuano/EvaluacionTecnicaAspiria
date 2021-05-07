@@ -2,6 +2,7 @@
 using JugueteriaFrontend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,27 +14,30 @@ namespace JugueteriaFrontend.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<HomeController> _logger;
         ProductosAPI _apiProductos = new ProductosAPI();
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<IActionResult> Index()
         {
-            List<Producto> productos = new List<Producto>();
-            HttpClient client = _apiProductos.Initial();
-            HttpResponseMessage response = await client.GetAsync("Productos");
+            var httpClient = _httpClientFactory.CreateClient("productos");
 
-            if (response.IsSuccessStatusCode) 
+            List<Producto> productos = new List<Producto>();
+         
+            HttpResponseMessage response = await httpClient.GetAsync("Producto");
+
+            if (response.IsSuccessStatusCode)
             {
                 var results = response.Content.ReadAsStringAsync().Result;
-                productos = JsonConvert.De
+                productos = JsonConvert.DeserializeObject<List<Producto>>(results);
             }
-            var productos = new RequestToApi().ObtenerProductos();
-            return View();
+            return View(productos);
         }
 
         public IActionResult Privacy()

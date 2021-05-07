@@ -29,6 +29,15 @@ namespace JugueteriaEvaluacionTecnicaBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:63209",
+                                            "https://localhost:44329");
+                    });
+            });
             services.AddControllers();
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
          //Registro de repositorios
@@ -48,7 +57,7 @@ namespace JugueteriaEvaluacionTecnicaBackend
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

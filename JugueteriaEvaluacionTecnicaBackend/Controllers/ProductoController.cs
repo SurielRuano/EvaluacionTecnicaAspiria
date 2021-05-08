@@ -35,6 +35,19 @@ namespace JugueteriaEvaluacionTecnicaBackend.Controllers
             return Ok(producto);
         }
 
+        [HttpGet("EliminarProducto", Name = "EliminarProducto")]
+        public IActionResult EliminarProducto(int id)
+        {
+            var producto = _productoRepositorio.GetById(id);
+
+            if (producto != null) {
+             _productoRepositorio.Remove(producto);
+                return Ok();
+
+            }
+            return NoContent();
+        }
+
         [HttpPost]
         public IActionResult Post(Producto producto)
         {

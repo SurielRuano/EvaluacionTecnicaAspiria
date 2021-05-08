@@ -6,14 +6,17 @@
 
 @foreach (var producto in Model)
 {
-    <tr>
-        <th scope="row">@producto.Nombre</th>
-        <td>@producto.Descripcion</td>
-        <td>@producto.RestriccionEdad años</td>
-        <td>$@producto.Precio MXN</td>
-        <td>
+<tr>
+    <th scope="row">@producto.Nombre</th>
+    <td>@producto.Descripcion</td>
+    <td>@producto.Compania</td>
+    <td>@producto.RestriccionEdad años</td>
+    <td>$@producto.Precio MXN</td>
+    <td>
+        <div class="btn-group-vertical" role="group">
             <button class="btn btn-info btnEditarProducto" data-idproducto="@producto.Id" data-toggle="modal" data-target="#modalEditarProducto" role="button"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editar</button>
-            <button class="btn btn-danger btnEliminarProducto" data-idproducto="@producto.Id" data-toggle="modal" data-target="#modalNuevoProducto" role="button"><i class="fa fa-trash" aria-hidden="true"></i> Eliminar</button>
-        </td>
-    </tr>
+            <button class="btn btn-danger btnEliminarProducto" data-idproducto="@producto.Id" data-toggle="modal" data-target="#modalEliminarProducto" role="button"><i class="fa fa-trash" aria-hidden="true"></i> Eliminar</button>
+        </div>
+    </td>
+</tr>
 }

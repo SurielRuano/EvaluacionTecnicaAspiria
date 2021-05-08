@@ -23,6 +23,7 @@ namespace DataAccess.EFCore
         public void AddRange(IEnumerable<T> entities)
         {
             _context.Set<T>().AddRange(entities);
+            _context.SaveChanges();
         }
         public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
         {
@@ -44,10 +45,12 @@ namespace DataAccess.EFCore
         public void Remove(T entity)
         {
             _context.Set<T>().Remove(entity);
+            _context.SaveChanges();
         }
         public void RemoveRange(IEnumerable<T> entities)
         {
             _context.Set<T>().RemoveRange(entities);
+            _context.SaveChanges();
         }
     }
 }

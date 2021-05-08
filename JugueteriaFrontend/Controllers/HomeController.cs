@@ -156,6 +156,35 @@ namespace JugueteriaFrontend.Controllers
             }
             return productos;
         }
+
+        public async Task<ActionResult> EliminarProducto(int id)
+        {
+            var httpClient = _httpClientFactory.CreateClient("productos");
+            object data = new
+            {
+                id = id,
+            };
+            var myContent = JsonConvert.SerializeObject(data);
+            StringContent httpContent = new StringContent(myContent, System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage postResponse = await httpClient.GetAsync("Producto/EliminarProducto?id="+id);
+
+            if (postResponse.IsSuccessStatusCode)
+            {
+                var productos = await ObtenerListaDeProductos();
+                string vistaParcialListaProductos = await this.RenderViewToStringAsync("~/Views/Home/_listaProductos.cshtml", productos);
+                return Json(new RespuestaDeProceso()
+                {
+                    Satisfactorio = true,
+                    Mensaje = "Guardado correctamente",
+                    Vista = vistaParcialListaProductos
+                });
+            }
+            else
+            {
+                return PartialView("~/Views/Home/_modalEditarProducto.cshtml");
+            }
+        }
     }
     public class RespuestaDeProceso
     {

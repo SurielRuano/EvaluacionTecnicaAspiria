@@ -36,29 +36,14 @@
                     <tr>
                         <th scope="col">Nombre</th>
                         <th scope="col">Descripción</th>
+                        <th scope="col">Compañia</th>
                         <th scope="col">Edad recomendada</th>
                         <th scope="col">Precio</th>
                         <th scope="col">Acción</th>
                     </tr>
                 </thead>
                 <tbody id="contenedorListaDeProductos">
-                    @*@foreach (var producto in Model)
-                        {
-                            <tr>
-                                <th scope="row">@producto.Nombre</th>
-                                <td>@producto.Descripcion</td>
-                                <td>@producto.RestriccionEdad años</td>
-                                <td>$@producto.Precio MXN</td>
-                                <td>
-
-                                    <a class="btn btn-info" role="button">Editar</a>
-                                    <a class="btn btn-info" role="button">Eliminar</a>
-                                </td>
-                            </tr>
-                        }*@
-
                     <partial name="~/Views/Home/_listaProductos.cshtml" model="@Model" />
-
                 </tbody>
             </table>
         </div>
@@ -84,18 +69,38 @@
 
         </div>
     </div>
+
+    <div class="modal fade" id="modalEliminarProducto" tabindex="-1" role="dialog" aria-labelledby="modalEliminarProductoLabel" aria-hidden="true">
+        <div class="modal-dialog" id="contenedorEditarProductoModal" role="document">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">                     
+                        <p>¿Quieres continuar? El proceso no podrá ser revertido.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, cancelar</button>
+                        <button id="btnEliminarProducto" data-idproducto type="submit" class="btn btn-primary">Si, continuar</button>
+                    </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 @section scripts{
 
-    @*<script src="sweetalert2.all.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>*@
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
 <script>
     $(document).ready(function () {
 
-
+         //NuevoProducto
         $('#modalNuevoProducto').on('show.bs.modal', function (e) {
 
             $("#contenedorCrearProductoModal").empty();
@@ -119,21 +124,10 @@
         })
 
 
-          $('#modalEditarProducto').on('show.bs.modal', function (e) {
-
-            $("#contenedorEditarProductoModal").empty();
-
-        })
-
-        //$("#modalEditarProducto").on('shown.bs.modal', function (e) {
-
-
-        //})
 
         $("#DelegadoDeEventos").on("click","#btnCrearProducto",function (e)
         {
             e.preventDefault();
-            //var formulario = $("#formCrearProducto")[0];
             var formData = new FormData(document.getElementById("formCrearProducto"));
             console.log(formData);
 
@@ -167,6 +161,14 @@
 
         })
 
+        //EditarProducto
+
+        $('#modalEditarProducto').on('show.bs.modal', function (e) {
+
+            $("#contenedorEditarProductoModal").empty();
+
+        })
+
         $("#DelegadoDeEventos").on("click", ".btnEditarProducto", function (e) {
 
             var id = $(this).data("idproducto");
@@ -190,7 +192,6 @@
        $("#DelegadoDeEventos").on("click","#btnEditarProducto",function (e)
         {
             e.preventDefault();
-            //var formulario = $("#formCrearProducto")[0];
             var formData = new FormData(document.getElementById("formEditarProducto"));
             console.log(formData);
 
@@ -211,20 +212,52 @@
                 if (json.satisfactorio) {
                     console.log(json.vista)
                     $("#contenedorListaDeProductos").html(json.vista)
-                    $("#modalNuevoProducto").modal("hide");
+                    $("#modalEditarProducto").modal("hide");
 
                 }
                 else {
-                    $("#contenedorCrearProductoModal").html(json.vista)
-
+                    $("#contenedorEditarProductoModal").html(json.vista)
                 }
-                $("#modalEditarProducto").modal("hide");
-
             })
 
         })
 
+        //Eliminar producto
 
+        $('#modalEliminarProducto').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget);
+            var clickedButtonId = button.data('idproducto');
+            $("#btnEliminarProducto").data("idproducto", clickedButtonId);
+        })
+
+        $("#DelegadoDeEventos").on("click", "#btnEliminarProducto", function (e) {
+
+            var context = $(this);
+
+            var idProducto = context.data("idproducto");
+
+            var url = "@Url.Action("EliminarProducto", "Home", new {id = "idProducto" })"
+            url = url.replace("idProducto", idProducto);
+
+               $.ajax
+                ({
+                    url: url,
+                })
+                    .done(function (json) {
+
+                        if (json.satisfactorio) {
+                            console.log(json.vista)
+                            $("#contenedorListaDeProductos").html(json.vista)
+                            $("#modalEliminarProducto").modal("hide");
+
+                        }
+                        else {
+                            $("#modalEliminarProducto").modal("hide");
+                        }
+
+                    })
+        })
 
     });
 </script>

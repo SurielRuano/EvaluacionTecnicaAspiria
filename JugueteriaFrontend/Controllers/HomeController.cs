@@ -59,7 +59,8 @@ namespace JugueteriaFrontend.Controllers
                     {
                         Satisfactorio = true,
                         Mensaje = "Guardado correctamente",
-                        Vista = vistaParcialListaProductos
+                        Vista = vistaParcialListaProductos,
+                        ProductosEnInventario = productos.Count()
                     });
                 }
                 else
@@ -94,7 +95,8 @@ namespace JugueteriaFrontend.Controllers
                     {
                         Satisfactorio = true,
                         Mensaje = "Guardado correctamente",
-                        Vista = vistaParcialListaProductos
+                        Vista = vistaParcialListaProductos,
+                        ProductosEnInventario = productos.Count()
                     });
                 }
                 else
@@ -177,7 +179,8 @@ namespace JugueteriaFrontend.Controllers
                 {
                     Satisfactorio = true,
                     Mensaje = "Guardado correctamente",
-                    Vista = vistaParcialListaProductos
+                    Vista = vistaParcialListaProductos,
+                    ProductosEnInventario= productos.Count()
                 });
             }
             else
@@ -191,6 +194,7 @@ namespace JugueteriaFrontend.Controllers
         public bool Satisfactorio { get; set; }
         public string Mensaje { get; set; }
         public string Vista { get; set; }
+        public int ProductosEnInventario { get; set; }
         public List<Producto> Productos { get; set; }
 
 

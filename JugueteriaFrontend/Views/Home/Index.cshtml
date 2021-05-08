@@ -22,6 +22,12 @@
 <div id="DelegadoDeEventos">
     <div class="text-center">
         <h1 class="display-4">Juguetería</h1>
+        <div class="container">
+            <div class="col-md-12 text-center">              
+                    <img width="100px" src="~/imagenes/juguetes.png" />             
+            </div>
+        </div>
+       <div><span><b id="numProductosDisponibles">@Model.Count()</b></span><span> productos disponibles</span></div>
 
         <div style="padding-top:50px">
             <div class="text-left pb-4">
@@ -146,10 +152,16 @@
                 var json = JSON.parse(data);
 
                 if (json.satisfactorio) {
-                    console.log(json.vista)
                     $("#contenedorListaDeProductos").html(json.vista)
+                    $("#numProductosDisponibles").text(json.productosEnInventario)
                     $("#modalNuevoProducto").modal("hide");
-
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Producto agregado',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
                 else {
                     $("#contenedorCrearProductoModal").html(json.vista)
@@ -210,9 +222,16 @@
                 var json = JSON.parse(data);
 
                 if (json.satisfactorio) {
-                    console.log(json.vista)
                     $("#contenedorListaDeProductos").html(json.vista)
+                    $("#numProductosDisponibles").text(json.productosEnInventario)
                     $("#modalEditarProducto").modal("hide");
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Actualizado correctamente',
+                        showConfirmButton: false,
+                        timer: 1000
+                    })
 
                 }
                 else {
@@ -247,9 +266,17 @@
                     .done(function (json) {
 
                         if (json.satisfactorio) {
-                            console.log(json.vista)
                             $("#contenedorListaDeProductos").html(json.vista)
+                            $("#numProductosDisponibles").text(json.productosEnInventario)
                             $("#modalEliminarProducto").modal("hide");
+
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Eliminado correctamente',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
 
                         }
                         else {

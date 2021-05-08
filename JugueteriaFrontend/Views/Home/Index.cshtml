@@ -4,39 +4,230 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Juguetería</h1>
-   
-    <div style="padding-top:50px">
-        <div class="text-left pb-4">
-            <button class="btn btn-danger" role="button">
-                <i class="fa fa-plus-square" aria-hidden="true"></i>
-                Agregar producto
-            </button>
-        </div>
-        
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Descripción</th>
-                    <th scope="col">Edad recomendada</th>
-                    <th scope="col">Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var producto in Model)
-                {
+<style>
+    .preloader {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        top: 50%;
+        left: 50%;
+        margin-left: -50px;
+        margin-top: -50px;
+        background: url(/link/to/your/image);
+        background-size: 100%;
+    }
+</style>
+<link rel="stylesheet" href="sweetalert2.min.css">
+
+<div id="DelegadoDeEventos">
+    <div class="text-center">
+        <h1 class="display-4">Juguetería</h1>
+
+        <div style="padding-top:50px">
+            <div class="text-left pb-4">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoProducto" role="button">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                    Agregar producto
+                </button>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <th scope="row">@producto.Nombre</th>
-                        <td>@producto.Descripcion</td>
-                        <td>@producto.RestriccionEdad años</td>
-                        <td>$@producto.Precio MXN</td>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Edad recomendada</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Acción</th>
                     </tr>
+                </thead>
+                <tbody id="contenedorListaDeProductos">
+                    @*@foreach (var producto in Model)
+                        {
+                            <tr>
+                                <th scope="row">@producto.Nombre</th>
+                                <td>@producto.Descripcion</td>
+                                <td>@producto.RestriccionEdad años</td>
+                                <td>$@producto.Precio MXN</td>
+                                <td>
+
+                                    <a class="btn btn-info" role="button">Editar</a>
+                                    <a class="btn btn-info" role="button">Eliminar</a>
+                                </td>
+                            </tr>
+                        }*@
+
+                    <partial name="~/Views/Home/_listaProductos.cshtml" model="@Model" />
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+    <!-- Modal -->
+
+    <div class="modal fade" id="modalNuevoProducto" tabindex="-1" role="dialog" aria-labelledby="modalNuevoProductoLabel" aria-hidden="true">
+        <span style="color:white; font-size:2em" class="preloader">Cargando...</span>
+        <div class="modal-dialog" id="contenedorCrearProductoModal" role="document">
+
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1" role="dialog" aria-labelledby="modalEditarProductoLabel" aria-hidden="true">
+        <span style="color:white; font-size:2em" class="preloader">Cargando...</span>
+        <div class="modal-dialog" id="contenedorEditarProductoModal" role="document">
+
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    @*<script src="sweetalert2.all.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>*@
+
+
+<script>
+    $(document).ready(function () {
+
+
+        $('#modalNuevoProducto').on('show.bs.modal', function (e) {
+
+            $("#contenedorCrearProductoModal").empty();
+
+        })
+
+        $("#modalNuevoProducto").on('shown.bs.modal', function (e) {
+
+                $.ajax
+                ({
+                    url: "@Url.Action("ObtenerVistaCrearProducto", "Home")",
+                })
+                    .done(function (response) {
+
+                        setTimeout(function () {
+                            $("#contenedorCrearProductoModal").html(response)
+
+                        }, 500);
+
+                    })
+        })
+
+
+          $('#modalEditarProducto').on('show.bs.modal', function (e) {
+
+            $("#contenedorEditarProductoModal").empty();
+
+        })
+
+        //$("#modalEditarProducto").on('shown.bs.modal', function (e) {
+
+
+        //})
+
+        $("#DelegadoDeEventos").on("click","#btnCrearProducto",function (e)
+        {
+            e.preventDefault();
+            //var formulario = $("#formCrearProducto")[0];
+            var formData = new FormData(document.getElementById("formCrearProducto"));
+            console.log(formData);
+
+            $.ajax({
+                url: "@Url.Action("CrearProducto", "Home")",
+                dataType: "html",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: "POST",
+
+
+            }).done(function (data)
+            {
+                var json = JSON.parse(data);
+
+                if (json.satisfactorio) {
+                    console.log(json.vista)
+                    $("#contenedorListaDeProductos").html(json.vista)
+                    $("#modalNuevoProducto").modal("hide");
+
+                }
+                else {
+                    $("#contenedorCrearProductoModal").html(json.vista)
+
                 }
 
 
-            </tbody>
-        </table>
-    </div>
-</div>
+            })
+
+        })
+
+        $("#DelegadoDeEventos").on("click", ".btnEditarProducto", function (e) {
+
+            var id = $(this).data("idproducto");
+            var url = "@Url.Action("ObtenerVistaEditarProducto", "Home", new {id = "idProducto" })"
+            url = url.replace("idProducto", id);
+
+               $.ajax
+                ({
+                    url: url,
+                })
+                    .done(function (response) {
+
+                        setTimeout(function () {
+                            $("#contenedorEditarProductoModal").html(response)
+
+                        }, 200);
+
+                    })
+        })
+
+       $("#DelegadoDeEventos").on("click","#btnEditarProducto",function (e)
+        {
+            e.preventDefault();
+            //var formulario = $("#formCrearProducto")[0];
+            var formData = new FormData(document.getElementById("formEditarProducto"));
+            console.log(formData);
+
+            $.ajax({
+                url: "@Url.Action("EditarProducto", "Home")",
+                dataType: "html",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: "POST",
+
+
+            }).done(function (data)
+            {
+                var json = JSON.parse(data);
+
+                if (json.satisfactorio) {
+                    console.log(json.vista)
+                    $("#contenedorListaDeProductos").html(json.vista)
+                    $("#modalNuevoProducto").modal("hide");
+
+                }
+                else {
+                    $("#contenedorCrearProductoModal").html(json.vista)
+
+                }
+                $("#modalEditarProducto").modal("hide");
+
+            })
+
+        })
+
+
+
+    });
+</script>
+
+
+} 

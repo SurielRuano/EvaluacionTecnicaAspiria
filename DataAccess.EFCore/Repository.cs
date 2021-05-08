@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace DataAccess.EFCore
         public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
+            _context.SaveChanges();
         }
         public void AddRange(IEnumerable<T> entities)
         {
@@ -33,6 +35,11 @@ namespace DataAccess.EFCore
         public T GetById(int id)
         {
             return _context.Set<T>().Find(id);
+        }
+        public void Update(T entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            _context.SaveChanges();
         }
         public void Remove(T entity)
         {

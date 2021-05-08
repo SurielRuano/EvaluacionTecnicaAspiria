@@ -24,4 +24,4 @@
 
 	El frontend "JugueteriaFrontend" fue realizado en Net core 3.1;
 		-Se hace uso de la arquitectura MVC para servir la pagina inicial, al no utilizar un framework para frontend como Angular o React, todas las acciones realizadas al "Agregar, editar y eliminar" fueron manejadas 
-		por medio de llamadas Jquery-AJAX, esto con la finalildad de obtener una experiencia similar a los beneficios que nos brindan dichos frameworks, cada accion "Agregar, editar y eliminar" fue realizada hacia el proyecto del Backend (JugueteriaEvaluacionTecnicaBackend) por medio de un Cliente Http
+		por medio de llamadas Jquery-AJAX, esto con la finalildad de no recargar la página en cada interacción (Agregar, editar y eliminar) fue realizada hacia el proyecto del Backend (JugueteriaEvaluacionTecnicaBackend) por medio de un Cliente Http
